@@ -9,6 +9,9 @@ var concat = require("gulp-concat");
 var imagemin = require("gulp-imagemin");
 var cache = require("gulp-cache");
 var del = require("del");
+var gulpif = require("gulp-if");
+var emittypug = require("emitty").setup("src/pug", "pug");
+var emittysass = require("emitty").setup("src/sass", "sass");
 
 var jsLibsPaths = [""];
 
@@ -21,7 +24,7 @@ var watchList = [
 ];
 
 var buildList = [
-  "removedist",
+  "cleanbuild",
   "sass",
   "js",
   "pug",
@@ -32,7 +35,7 @@ var buildList = [
 gulp.task("browsersync", function() {
   return browsersync({
     server: { baseDir: "dev" },
-    index: "main.html",
+    // index: "main.html",
     notify: false
   });
 });
@@ -40,6 +43,7 @@ gulp.task("browsersync", function() {
 gulp.task("sass", function() {
   return gulp
     .src(["src/sass/**/*.sass", "!src/sass/**/_*.sass"])
+    .pipe(gulpif(global.watch, emittysass.stream()))
     .pipe(sass().on("error", notify.onError()))
     .pipe(autoprefixer(["last 15 versions"]))
     .pipe(gulp.dest("dev/css"))
@@ -49,7 +53,8 @@ gulp.task("sass", function() {
 gulp.task("pug", function() {
   return gulp
     .src(["src/pug/**/*.pug", "!src/pug/**/_*.pug"])
-    .pipe(pug({pretty: true}).on("error", notify.onError()))
+    .pipe(gulpif(global.watch, emittypug.stream()))
+    .pipe(pug({ pretty: true }).on("error", notify.onError()))
     .pipe(gulp.dest("dev/"))
     .pipe(browsersync.reload({ stream: true }));
 });
@@ -80,6 +85,7 @@ gulp.task("imagemin", function() {
 });
 
 gulp.task("watch", watchList, function() {
+  global.watch = true;
   gulp.watch("src/sass/**/*.sass", ["sass"]);
   gulp.watch("src/js/main.js", ["js"]);
   // gulp.watch(jsLibsPaths,["jslibs"]);
@@ -99,8 +105,14 @@ gulp.task("build", buildList, function() {
   var buildFonts = gulp.src("app/fonts/**/*").pipe(gulp.dest("build/fonts"));
 });
 
-gulp.task("removedist", function() {
-  return del.sync("build");
+gulp.task("cleanbuild", function() {
+  return del.sync([
+    "build/**/*",
+    "!build/README.md",
+    "!build/CNAME",
+    "!build/.git",
+    "!build/.gitignore"
+  ]);
 });
 
 gulp.task("cleancache", function() {

@@ -11,10 +11,12 @@
   "devDependencies": {
     "browser-sync": "^2.23.5",
     "del": "^3.0.0",
+    "emitty": "^1.4.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.1.0",
     "gulp-cache": "^1.0.2",
     "gulp-concat": "^2.6.1",
+    "gulp-if": "^2.0.2",
     "gulp-imagemin": "^4.1.0",
     "gulp-notify": "^3.2.0",
     "gulp-pug": "^3.3.0",
