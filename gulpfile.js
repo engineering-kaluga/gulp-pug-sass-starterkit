@@ -42,7 +42,12 @@ gulp.task("browsersync", function() {
 
 gulp.task("sass", function() {
   return gulp
-    .src(["src/sass/**/*.sass", "!src/sass/**/_*.sass"])
+    .src([
+      "src/sass/**/*.sass",
+      "!src/sass/**/_*.sass",
+      "src/sass/**/*.scss",
+      "!src/sass/**/_*.scss"
+    ])
     .pipe(gulpif(global.watch, emittysass.stream()))
     .pipe(sass().on("error", notify.onError()))
     .pipe(autoprefixer(["last 15 versions"]))
@@ -61,7 +66,7 @@ gulp.task("pug", function() {
 
 gulp.task("js", function() {
   return (gulp
-      .src("app/js/main.js")
+      .src("src/js/main.js")
       .pipe(uglify())
       //.pipe(concat("main.min.js"))
       .pipe(gulp.dest("dev/js"))
@@ -79,7 +84,7 @@ gulp.task("js", function() {
 
 gulp.task("imagemin", function() {
   return gulp
-    .src("app/img/**/*")
+    .src("src/img/**/*")
     .pipe(cache(imagemin()))
     .pipe(gulp.dest("dev/img"));
 });
@@ -102,7 +107,7 @@ gulp.task("build", buildList, function() {
 
   var buildImgs = gulp.src("dev/img/**/*").pipe(gulp.dest("build/img"));
 
-  var buildFonts = gulp.src("app/fonts/**/*").pipe(gulp.dest("build/fonts"));
+  var buildFonts = gulp.src("src/fonts/**/*").pipe(gulp.dest("build/fonts"));
 });
 
 gulp.task("cleanbuild", function() {
